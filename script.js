@@ -44,7 +44,13 @@ async function fetchSubmissions() {
             seen.add(r.submissionId);
     
             const choices = r.questions[0]?.value;
-            choices.forEach(choice => {if (tally.hasOwnProperty(shorten_name(choice))) tally[shorten_name(choice)]++;})
+
+            // count votes
+            choices.forEach(choice => {
+                if (tally.hasOwnProperty(shorten_name(choice))){
+                    tally[shorten_name(choice)]++;
+                } 
+            })
       });
   
       offset += got;
@@ -63,6 +69,18 @@ async function fetchSubmissions() {
       setTimeout(loop, 1000);
      })();
 })();
+
+function removeLowest10(obj) {
+    // 1. Grab [key, value] pairs
+    const entries = Object.entries(obj);
+    // 2. Sort ascending by the numeric value
+    entries.sort((a, b) => a[1] - b[1]);
+    // 3. Drop the first ten (lowest) and keep the rest
+    const filtered = entries.slice(49);
+    // 4. Build a fresh object from those remaining pairs
+    return Object.fromEntries(filtered);
+}
+
 
 function getColorForLabel(label, index) {
     if (!colorMap[label]) {
@@ -155,7 +173,6 @@ function get_options(){
                         size: 16,
                         family: 'Arial'
                     },
-                    color: '#f4f7f5'
                     color: '#f4f7f5'
                 },
                 grid: {
